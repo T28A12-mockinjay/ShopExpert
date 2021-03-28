@@ -1,0 +1,212 @@
+{% extends 'shop/basic.html' %}
+
+
+
+{% block title %} Index of shop{% endblock %}
+
+
+
+{% block css %}
+
+ .col-md-3{
+          display: inline-block;
+          margin-left: -4px;
+          }
+          .carousel-indicators .active{
+          background-color: blue;
+          }
+          .col-md-3 img{
+          width:100%;
+          height: 230px;
+          }
+          body .carousel-indicator li{
+          background-color: blue;
+          }
+           body .carousel-indicators{
+           bottom:0;
+           }
+           body .carousel-control-prev-icon,
+           body .carousel-control-next-icon{
+             background-color: blue;
+           }
+         .carousel-control-prev,
+         .carousel-control-next{
+          top: auto;
+          bottom: auto;
+          }
+           body .no-padding{
+           padding-left:0;
+           padding-right:15px;
+           }
+
+{% endblock %}
+
+
+
+{% block body %}
+
+{% load static %}
+ <div class="container ">
+
+     {% for products, range, nSlides in allp %}
+     <!-- slide show starts here -->
+     <h3 class="my-3">{{products.0.category}}</h3>
+
+  <div id="demo{{forloop.counter}}" class="col carousel slide" data-ride="carousel">
+
+  <ul class="carousel-indicators">
+      <li data-target="#demo{{forloop.counter}}" data-slide-to="0" class="active"></li>
+      {% for i in range %}
+      <li data-target="#demo{{forloop.parentloop.counter}}" data-slide-to={{i}}></li>
+      {% endfor %}
+  </ul>
+
+
+  <div class="container carousel-inner no-padding">
+
+
+          <div class="carousel-item active">
+             <div class="row">
+
+               {% for i in products %}
+              <div class="col-xs-3 col-sm-3 col-md-3 ">
+               <div class="card align-items-center" style="width: 16rem; ">    <!-- align-items-center aligns the phto st center of card -->
+                   <img src="/media/{{i.image}}" class="card-img-top" alt="...">
+                     <div class="card-body">
+                          {% if i.prod_name|length > 25 %}
+                         <h6 class="card-title">{{i.prod_name|slice:":25"}}</h6>
+                         {%  else %}
+                          <h6 class="card-title">{{i.prod_name}}</h6>
+                         {% endif %}
+                         {% if i.desc|length > 25 %}
+                         <p class="card-text">{{i.desc|slice:":25"}}...</p>
+                         {% else %}
+                          <p class="card-text">{{i.desc}}</p>
+                         {% endif %}
+                         <span id="divpr{{i.id}}">
+                         <button id="pr{{i.id}}" class="btn btn-primary cart">Add to cart</button>
+                       </span>
+                         <a href="/shop/prodView/{{i.id}}"><button id="qv{{i.id}}" class="btn btn-primary cart">QuickView</button></a>
+                     </div>
+               </div>
+              </div>
+                  {% if forloop.counter|divisibleby:4 and forloop.counter > 0 and not forloop.last %}
+             </div></div><div class="carousel-item">  <div class="row">
+      {% endif %}
+                  {% endfor %}
+      </div>
+  </div>
+
+
+
+
+
+
+  </div>
+
+</div>
+
+
+
+  <!-- left nd right controls for the slides -->
+
+     <a class="carousel-control-prev" href="#demo{{forloop.counter}}" data-slide="prev">
+    <span class="carousel-control-prev-icon"></span>
+</a>
+  <a class="carousel-control-next" href="#demo{{forloop.counter}}" data-slide="next">
+    <span class="carousel-control-next-icon"></span>
+</a>
+
+{% endfor %}
+
+ </div>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+{% block js %}
+<script>
+
+// get the cart from localStorage
+if(localStorage.getItem('cart') == null){
+var cart = {}
+}
+else{
+cart = JSON.parse(localStorage.getItem('cart'));    // to convert value of 'cart' to dictionary type bcoz value of 'cart' will be of string type
+update(cart);
+
+}
+
+// activating popcart
+//$('#popovercart').popover('show');   //content shown every time
+$('#popovercart').popover();    //content shown only on click
+document.getElementById('popovercart').setAttribute('data-content','<h5>Cart</h5>');
+
+
+// item quantity increasing on cart click
+$('.cart').click(function(){         //run this function whenever a click is performed on the element with class name = cart
+
+var idstr = this.id.toString();
+if(cart[idstr] != null){              //if(cart[idstr] != undefined){
+cart[idstr] = cart[idstr] + 1;
+}
+else{
+cart[idstr] = 1;
+}
+
+update(cart);
+ //document.getElementById('div' + item).innerHTML = "<button id='minus" + item + "' class='btn btn-primary minus'>-</button> <span id='val" + item + "''>" + cart[item] + "</span> <button id='plus" + item + "' class='btn btn-primary plus'> + </button>";
+
+});
+
+$('.mi').click(function(){
+console.log(this.id);
+  a = this.id.slice(4,);  //this.id=pr3
+  //console.log(a);
+  console.log(cart['pr'+a]);
+  cart['pr'+a]=Math.max(0,cart['pr'+a]-1);
+  document.getElementById('valpr'+a).innerHTML = cart['pr'+a];
+localStorage.setItem('cart',JSON.stringify(cart));
+
+  });
+
+$('.ad').click(function(){
+console.log(this.id);
+  a = this.id.slice(4,);
+cart['pr'+a]=cart['pr'+a]+1;
+  document.getElementById('valpr'+a).innerHTML = cart['pr'+a];
+localStorage.setItem('cart',JSON.stringify(cart));
+
+  });
+
+function update(cart){
+localStorage.setItem('cart',JSON.stringify(cart));
+for(var item in cart){
+    document.getElementById('div'+item).innerHTML='<button id="mi'+item + '" class="btn btn-primary mi" >-</button><span id="val'+item+'">'+cart[item] +'</span><button id="ad'+item+'" class="btn btn-primary ad" >+</button>';
+  }
+document.getElementById('cart').innerHTML = Object.keys(cart).length;
+  
+  console.log(cart);
+}
+
+
+</script>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+

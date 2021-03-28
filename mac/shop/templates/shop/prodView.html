@@ -1,0 +1,64 @@
+{% extends 'shop/basic.html' %}
+
+{% block title %}Product View Page{% endblock %}
+
+{% block body %}
+<div class="container my-4">
+    <div class="row">
+        <div class="col">
+    <img src="/media/{{prod.image}}" width="400px" height="500px" >
+            </div>
+        <div class="col">
+        <div class="container my-4">
+            <h3>{{prod.prod_name}}</h3>
+            <p>{{prod.desc}}</p>
+            <p><b>Price:</b> Rs.{{prod.price}}</p>
+            <div class="row">
+                <div class="col">
+                    <button class="btn btn-primary" type="button">Buy Now</button>
+                </div>
+                <div class="col">
+                    <button class="btn btn-primary" type="button">Add to Cart</button>
+                </div>
+            </div>
+        </div>
+            </div>
+    </div>
+</div>
+{% endblock %}
+
+
+
+
+
+{% block js %}
+<script>
+if(localStorage.getItem('cart') == null){
+var cart = {}
+}
+else{
+cart = JSON.parse(localStorage.getItem('cart'));    // to convert value of 'cart' to dictionary type bcoz value of 'cart' will be of string type
+document.getElementById('cart').innerHTML = Object.keys(cart).length;
+}
+
+//$('#popovercart').popover('show');   //content shown every time
+$('#popovercart').popover();    //content shown only on click
+document.getElementById('popovercart').setAttribute('data-content','<h5>Cart</h5>');
+
+
+$('.cart').click(function(){         //run this function whenever a click is performed on the element with class name = cart
+
+var idstr = this.id.toString();
+console.log(idstr);
+if(cart[idstr] != null){              //if(cart[idstr] != undefined){
+cart[idstr] = cart[idstr] + 1;
+}
+else{
+cart[idstr] = 1;
+}
+console.log(cart);
+localStorage.setItem('cart',JSON.stringify(cart));
+document.getElementById('cart').innerHTML = Object.keys(cart).length;
+});
+</script>
+{% endblock %}

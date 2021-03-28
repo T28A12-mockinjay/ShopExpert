@@ -1,0 +1,51 @@
+{% extends 'shop/basic.html' %}
+
+{% block title %}About Page{% endblock %}
+
+
+{% block body %}
+<div class="jumbotron mx-4 my-4">
+  <h1 class="display-4">Know More About ShopExpert</h1>
+  <p class="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
+  <hr class="my-4">
+  <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
+  <p class="lead">
+    <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+  </p>
+</div>
+{% endblock %}
+
+
+
+
+{% block js %}
+<script>
+if(localStorage.getItem('cart') == null){
+var cart = {}
+}
+else{
+cart = JSON.parse(localStorage.getItem('cart'));    // to convert value of 'cart' to dictionary type bcoz value of 'cart' will be of string type
+document.getElementById('cart').innerHTML = Object.keys(cart).length;
+}
+
+$('#popovercart').popover();    //content shown only on click
+document.getElementById('popovercart').setAttribute('data-content','<h5>Cart</h5>');
+
+
+$('.cart').click(function(){         //run this function whenever a click is performed on the element with class name = cart
+
+console.log('clicked');
+var idstr = this.id.toString();
+console.log(idstr);
+if(cart[idstr] != null){              //if(cart[idstr] != undefined){
+cart[idstr] = cart[idstr] + 1;
+}
+else{
+cart[idstr] = 1;
+}
+console.log(cart);
+localStorage.setItem('cart',JSON.stringify(cart));
+document.getElementById('cart').innerHTML = Object.keys(cart).length;
+});
+</script>
+{% endblock %}
